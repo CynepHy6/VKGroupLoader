@@ -30,7 +30,7 @@
             android:name="com.vk.sdk.VKServiceActivity"
             android:label="ServiceActivity"
             android:theme="@style/VK.Transparent" />
-        <activity android:name=".GroupNameActivity" />
+        <activity android:name=".GroupIdActivity" />
         <activity
             android:name=".ListFilesActivity"
             android:label="@string/title_activity_list_files" >
