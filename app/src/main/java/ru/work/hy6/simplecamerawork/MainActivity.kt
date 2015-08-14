@@ -30,8 +30,8 @@ import java.io.FileFilter
 import java.text.SimpleDateFormat
 import java.util.Date
 import kotlin.properties.Delegates
-
 val DEBUG = true
+
 val DEFAULT_GROUP = if (DEBUG) 98059938 else 18267412
 val DEFAULT_MESSAGE = ""
 val CHANGE_GROUP_REQUEST_CODE = 1
@@ -53,10 +53,14 @@ val STORAGE_SENDOUT: File by Delegates.lazy {
 }
 var activeDirectory: File by Delegates.notNull()
 
-public class MainActivity : Activity(), View.OnClickListener {
+fun log(s: String) = {
+    if (DEBUG) Log.d("simpleLog", s)
+}
 
+public class MainActivity : Activity(), View.OnClickListener {
     private var vk_group_id: Int by Delegates.notNull()
     private var message_text: String by Delegates.notNull()
+
     private var sPref: SharedPreferences by Delegates.notNull()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +74,12 @@ public class MainActivity : Activity(), View.OnClickListener {
         bDeleteMessage.setOnClickListener(this)
         bLogin.setOnClickListener(this)
         bGroup.setOnClickListener(this)
-        bSendout.setOnClickListener(this)
+        bDelete.setOnClickListener(this)
+        bDelete.setOnLongClickListener {
+            activeDirectory = STORAGE_SENDOUT
+            actionListFiles()
+            false
+        }
 
         labelGroupName.setClickable(true)
         labelGroupName.setOnClickListener(this)
@@ -92,12 +101,8 @@ public class MainActivity : Activity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v) {
-            tvStorageListFiles -> {
+            tvStorageListFiles, bDelete -> {
                 activeDirectory = STORAGE
-                actionListFiles()
-            }
-            bSendout -> {
-                activeDirectory = STORAGE_SENDOUT
                 actionListFiles()
             }
             bDeleteMessage -> {
@@ -119,8 +124,7 @@ public class MainActivity : Activity(), View.OnClickListener {
     }
 
     private fun updateListFiles() {
-        val str = getResources().getText(R.string.label_files_in)
-        labelListFiles.setText("${str}${STORAGE.getAbsolutePath()}:")
+        labelListFiles.setText("${STORAGE.getAbsolutePath()}:")
         val sb = StringBuilder()
         for ((i, file) in getStorageFiles().withIndex()) {
             sb.append("${i + 1} \t${file.name} \t${Math.round(file.length() / 1024f)} Kb\n")
@@ -130,9 +134,9 @@ public class MainActivity : Activity(), View.OnClickListener {
 
     private fun updateLabelLoginButton() {
         if (!VKSdk.wakeUpSession(this)) {
-            bLogin.setText(R.string.vk_login)
+            bLogin.setText(R.string.label_vk_login)
         } else {
-            bLogin.setText(R.string.vk_logout)
+            bLogin.setText(R.string.label_vk_logout)
         }
     }
 
@@ -175,11 +179,15 @@ public class MainActivity : Activity(), View.OnClickListener {
         saveSettings()
 
         if (isOnline() && VKSdk.isLoggedIn()) {
-            toast(R.string.message_run_send)
-            sendPhotos()
-        }else if (!VKSdk.isLoggedIn()) {
+            if (getStorageFiles().size() != 0 || message_text == "" ){
+                toast(R.string.message_send_nothing)
+            }else {
+                toast(R.string.message_run_send)
+                sendPhotos()
+            }
+        } else if (!VKSdk.isLoggedIn()) {
             toast(R.string.message_logoff)
-        }else if (!isOnline()){
+        } else if (!isOnline()) {
             toast(R.string.message_internet_off)
         }
     }
@@ -251,7 +259,7 @@ public class MainActivity : Activity(), View.OnClickListener {
         post.executeWithListener(object : VKRequest.VKRequestListener() {
             override fun onComplete(response: VKResponse?) {
                 log("Post SUCCESSFULLY send")
-                toast(R.string.success_sendout)
+                toast(R.string.message_success_sendout)
             }
 
             override fun onError(error: VKError?) {
@@ -292,10 +300,6 @@ public class MainActivity : Activity(), View.OnClickListener {
         }
     }
 
-}
-
-fun log(s: String) {
-    if (DEBUG) Log.d("simpleLog", s)
 }
 
 class GroupNameActivity : Activity() {
