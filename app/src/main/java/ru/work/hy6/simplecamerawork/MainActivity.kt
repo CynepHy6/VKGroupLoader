@@ -31,43 +31,46 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import kotlin.properties.Delegates
 
-val DEBUG = false
+val DEBUG = true
 val DEFAULT_GROUP = if (DEBUG) 98059938 else 18267412
 val DEFAULT_MESSAGE = ""
 val CHANGE_GROUP_REQUEST_CODE = 1
 val A_GROUP_ID = "vk_group"
 val A_MESSAGE = "message"
 
+val STORAGE: File by Delegates.lazy {
+    val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "VKGroUploader")
+    if (!d.exists())
+        d.mkdir()
+    d
+}
+
+val STORAGE_SENDOUT: File by Delegates.lazy {
+    val d = File(STORAGE.getAbsoluteFile(), "Sendout")
+    if (!d.exists())
+        d.mkdir()
+    d
+}
+var activeDirectory: File by Delegates.notNull()
+
 public class MainActivity : Activity(), View.OnClickListener {
 
     private var vk_group_id: Int by Delegates.notNull()
     private var message_text: String by Delegates.notNull()
-
     private var sPref: SharedPreferences by Delegates.notNull()
-
-    val storage: File by Delegates.lazy {
-        val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "VKGroUploader")
-        if (!d.exists())
-            d.mkdir()
-        d
-    }
-    val storageSendout: File by Delegates.lazy {
-        val d = File(storage.getAbsoluteFile(), "Sendout")
-        if (!d.exists())
-            d.mkdir()
-        d
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super<Activity>.onCreate(savedInstanceState)
         VKSdk.initialize(this)
         setContentView(R.layout.main)
-        tvListFiles.setOnClickListener(this)
+
+        tvStorageListFiles.setOnClickListener(this)
         bSend.setOnClickListener(this)
         bPhoto.setOnClickListener(this)
-        bDelete.setOnClickListener(this)
+        bDeleteMessage.setOnClickListener(this)
         bLogin.setOnClickListener(this)
         bGroup.setOnClickListener(this)
+        bSendout.setOnClickListener(this)
 
         labelGroupName.setClickable(true)
         labelGroupName.setOnClickListener(this)
@@ -89,11 +92,16 @@ public class MainActivity : Activity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v) {
-            tvListFiles -> {
+            tvStorageListFiles -> {
+                activeDirectory = STORAGE
                 actionListFiles()
             }
-            bDelete -> {
-                actionDelete()
+            bSendout -> {
+                activeDirectory = STORAGE_SENDOUT
+                actionListFiles()
+            }
+            bDeleteMessage -> {
+                actionDeleteMessage()
             }
             bLogin -> {
                 actionLogin()
@@ -112,12 +120,12 @@ public class MainActivity : Activity(), View.OnClickListener {
 
     private fun updateListFiles() {
         val str = getResources().getText(R.string.label_files_in)
-        labelListFiles.setText("${str}${storage.getAbsolutePath()}:")
+        labelListFiles.setText("${str}${STORAGE.getAbsolutePath()}:")
         val sb = StringBuilder()
         for ((i, file) in getStorageFiles().withIndex()) {
-            sb.append("${i+1} \t${file.name} \t${Math.round(file.length() / 1024f)} Kb\n")
+            sb.append("${i + 1} \t${file.name} \t${Math.round(file.length() / 1024f)} Kb\n")
         }
-        tvListFiles.setText(sb.toString())
+        tvStorageListFiles.setText(sb.toString())
     }
 
     private fun updateLabelLoginButton() {
@@ -157,7 +165,7 @@ public class MainActivity : Activity(), View.OnClickListener {
         updateLabelLoginButton()
     }
 
-    private fun actionDelete() {
+    private fun actionDeleteMessage() {
         log("touch Comment")
         etMessage.setText("")
     }
@@ -165,19 +173,21 @@ public class MainActivity : Activity(), View.OnClickListener {
     private fun actionSend() {
         log("touch Send")
         saveSettings()
-        if (isOnline()){
+
+        if (isOnline() && VKSdk.isLoggedIn()) {
             toast(R.string.message_run_send)
             sendPhotos()
-        }
-        else{
+        }else if (!VKSdk.isLoggedIn()) {
+            toast(R.string.message_logoff)
+        }else if (!isOnline()){
             toast(R.string.message_internet_off)
         }
     }
 
     private fun isOnline(): Boolean {
-            val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val netInfo = cm.getActiveNetworkInfo()
-            return netInfo != null && netInfo.isConnectedOrConnecting()
+        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val netInfo = cm.getActiveNetworkInfo()
+        return netInfo != null && netInfo.isConnectedOrConnecting()
     }
 
     private fun sendPhotos() {
@@ -216,7 +226,7 @@ public class MainActivity : Activity(), View.OnClickListener {
     private fun cleanStorageDir() {
         val files = getStorageFiles()
         for (file in files) {
-            file.renameTo(File(storageSendout.getAbsoluteFile(), file.name))
+            file.renameTo(File(STORAGE_SENDOUT.getAbsoluteFile(), file.name))
         }
 
     }
@@ -252,15 +262,16 @@ public class MainActivity : Activity(), View.OnClickListener {
 
     fun getBitmap(file: File): Bitmap = BitmapFactory.decodeFile(file.getAbsolutePath())
 
-    fun getStorageFiles(): Array<out File> = storage.listFiles(FileFilter { !it.isDirectory() })
+    fun getStorageFiles(): Array<out File> = STORAGE.listFiles(FileFilter { !it.isDirectory() })
 
     private fun getNewFileForImage(): File {
         val fileName = "SCW_${SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())}.jpg"
-        return File(storage.getAbsolutePath(), fileName)
+        return File(STORAGE.getAbsolutePath(), fileName)
     }
 
     private fun toast(res: Int) {
         Toast.makeText(this, res, Toast.LENGTH_SHORT).show()
+        log("${getResources().getText(res)}")
     }
 
     private fun actionGroupName() {

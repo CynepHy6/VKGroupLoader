@@ -10,9 +10,11 @@
         android:id="@+id/llHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:gravity="right"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp">
 
         <TextView
             android:id="@+id/labelGroupName"
@@ -45,16 +47,33 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="5dp"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
 
-        <TextView
-            android:id="@+id/labelListFiles"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_files_in"
-            android:textColor="@android:color/black"/>
+            >
+
+            <TextView
+                android:id="@+id/labelListFiles"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/label_files_in"
+                android:textColor="@android:color/black"
+                android:layout_weight="1"
+                />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/label_sent_button"
+                android:id="@+id/bSendout"
+                android:src="@android:drawable/ic_menu_delete"/>
+        </LinearLayout>
 
         <ScrollView
             android:id="@+id/svListFiles"
@@ -64,7 +83,7 @@
             android:fillViewport="true">
 
             <TextView
-                android:id="@+id/tvListFiles"
+                android:id="@+id/tvStorageListFiles"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
@@ -73,27 +92,26 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            >
 
             <TextView
                 android:id="@+id/labelMessage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/label_message"
-                android:layout_gravity="center_vertical"
-                android:textColor="@android:color/black"/>
-
-            <Space
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_height="match_parent"
+                android:text="@string/label_message"
+                android:textColor="@android:color/black"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:layout_marginLeft="5dp"
+                android:textSize="20sp"/>
 
             <ImageButton
-                android:id="@+id/bDelete"
+                android:id="@+id/bDeleteMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/label_delete"
-                android:src="@android:drawable/ic_menu_delete"/>
+                android:contentDescription="@string/label_clear_message"
+                android:src="@android:drawable/ic_input_delete"/>
         </LinearLayout>
 
         <ScrollView
@@ -108,17 +126,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_message"
-                />
+                android:inputType="textAutoComplete|textMultiLine"
+                android:gravity="center_vertical|center_horizontal"/>
         </ScrollView>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:id="@+id/llFooter">
+        android:id="@+id/llFooter"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp">
 
         <ImageButton
             android:id="@+id/bPhoto"

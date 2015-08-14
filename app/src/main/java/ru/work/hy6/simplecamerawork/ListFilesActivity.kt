@@ -11,15 +11,21 @@ import kotlinx.android.synthetic.a_list_files.bDelete
 import kotlinx.android.synthetic.a_list_files.lvListFiles
 import kotlinx.android.synthetic.a_list_files.tvListFilesTitle
 import java.io.File
+import java.io.FileFilter
 import kotlin.properties.Delegates
 
-public class ListFilesActivity : Activity(), View.OnClickListener{
+public class ListFilesActivity() : Activity(), View.OnClickListener{
     private val A_TEXT = "text"
     private val A_IMAGE = "image"
     private val A_CHECK = "checkbox"
 
-    private var files: Array<out File> by Delegates.notNull()
-    private var names: Array<String> by Delegates.notNull()
+    private val DIRECTORY = activeDirectory
+    private val FILES: Array<out File> by Delegates.lazy{
+        DIRECTORY.listFiles(FileFilter{!it.isDirectory()})
+    }
+    private val NAMES: Array<String> by Delegates.lazy{
+        Array(FILES.size(), { i -> "${FILES[i].name} \t ${FILES[i].length() / 1024} Kb" })
+    }
 
 
     // TODO: CustomAdapter<Array<Bitmap>>
@@ -27,10 +33,8 @@ public class ListFilesActivity : Activity(), View.OnClickListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super<Activity>.onCreate(savedInstanceState)
         setContentView(R.layout.a_list_files)
-        files = MainActivity().getStorageFiles()
-        names = Array(files.size(), { i -> "${files[i].name} \t ${files[i].length() / 1024} Kb" })
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, names)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, NAMES)
 
         adapter.registerDataSetObserver(object : DataSetObserver() {
             override fun onChanged() {
@@ -41,8 +45,17 @@ public class ListFilesActivity : Activity(), View.OnClickListener{
         lvListFiles.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE)
         lvListFiles.setAdapter(adapter)
 
-        tvListFilesTitle.setText(MainActivity().storage.getAbsolutePath())
+        tvListFilesTitle.setText(DIRECTORY.getAbsolutePath())
         bDelete.setOnClickListener(this)
+        updateLabelButton()
+    }
+
+    private fun updateLabelButton() {
+        if (FILES.size() == 0){
+            bDelete.setText(R.string.label_back_button)
+        }else{
+            bDelete.setText(R.string.label_delete_button)
+        }
     }
 
 
@@ -51,10 +64,10 @@ public class ListFilesActivity : Activity(), View.OnClickListener{
             bDelete -> {
                 val sba = lvListFiles.getCheckedItemPositions()
 
-                for (i in 0..files.size()-1) {
+                for (i in 0..FILES.size()-1) {
                     val key = sba.keyAt(i)
                     if (sba.get(key))
-                    log("${files[key].name}, delete: ${files[key].delete()}") //
+                    log("${FILES[key].name}, delete: ${FILES[key].delete()}") //
                 }
                 finish()
             }
