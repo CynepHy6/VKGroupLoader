@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VK GroUploader</string>
+    <string name="action_settings">Настройки</string>
+    <string name="hint_message">Введите текст сообщения</string>
+    <string name="label_delete">Удалить</string>
+    <string name="label_files_in">Файлы в </string>
+    <string name="label_get_photo_button">Сфотографировать</string>
+    <string name="label_group">ID группы:</string>
+    <string name="label_list_files">Список файлов в каталоге</string>
+    <string name="label_login"></string>
+    <string name="vk_login">ВК Войти</string>
+    <string name="vk_logout">ВК Выйти</string>
+    <string name="success_sendout">Сообщение отправленно</string>
+    <string name="label_send_button">Отправить</string>
+    <string name="label_message">Сообщение: </string>
+    <string name="label_vk_group_id">ID группы:</string>
+    <string name="OK">Готово</string>
+    <string name="hint_enter_vk_group">Введите ИД группы Вконтакте</string>
+    <string name="message_internet_off">Интернет недоступен. Не могу отправить сообщение</string>
+    <string name="title_activity_list_files">Список файлов</string>
+    <string name="message_run_send">Сообщение отправляется..</string>
+    <string name="description_image_preview">Изображение</string>
+</resources>
