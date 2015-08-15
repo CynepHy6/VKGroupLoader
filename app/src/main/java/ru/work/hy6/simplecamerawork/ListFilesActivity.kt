@@ -7,7 +7,7 @@ import android.view.View
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import kotlinx.android.synthetic.a_list_files.bDelete
+import kotlinx.android.synthetic.a_list_files.*
 import kotlinx.android.synthetic.a_list_files.lvListFiles
 import kotlinx.android.synthetic.a_list_files.tvListFilesTitle
 import java.io.File
@@ -44,28 +44,21 @@ public class ListFilesActivity() : Activity(), View.OnClickListener {
         lvListFiles.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE)
         lvListFiles.setAdapter(adapter)
         tvListFilesTitle.setText(DIRECTORY.getAbsolutePath())
+
         bDelete.setOnClickListener(this)
+        bInvert.setOnClickListener(this)
+
+        if (FILES.size() > 0) bInvert.setVisibility(View.VISIBLE)
         lvListFiles.setOnItemClickListener(object : AdapterView.OnItemClickListener {
             override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                log("view.width: ${view.getWidth()}, view.id: ${view.getId()}, pos: ${position}, id: ${id}")
-                isItemСheck = false
-                if (FILES.size() > 0) {
-                    val sba = lvListFiles.getCheckedItemPositions()
-                    for (i in 0..FILES.size() - 1) {
-                        val key = sba.keyAt(i)
-                        if (sba.get(key)) {
-                            isItemСheck = true
-                            break
-                        }
-                    }
-                }
-                updateLabelButton()
+                updateButtonDelete()
             }
         })
-        updateLabelButton()
+        updateButtonDelete()
     }
 
-    private fun updateLabelButton() {
+    private fun updateButtonDelete() {
+        isItemСheck = lvListFiles.getCheckedItemCount() > 0
         if (isItemСheck) {
             bDelete.setText(R.string.label_delete_button)
         } else {
@@ -79,7 +72,18 @@ public class ListFilesActivity() : Activity(), View.OnClickListener {
             bDelete -> {
                 actionDelete()
             }
+            bInvert ->{
+                actionInvert()
+            }
         }
+    }
+
+    private fun actionInvert() {
+        for (i in 0..FILES.size()-1) {
+            val check = lvListFiles.isItemChecked(i)
+            lvListFiles.setItemChecked(i, !check)
+        }
+        updateButtonDelete()
     }
 
     private fun actionDelete() {
@@ -88,7 +92,7 @@ public class ListFilesActivity() : Activity(), View.OnClickListener {
             for (i in 0..FILES.size() - 1) {
                 val key = sba.keyAt(i)
                 if (sba.get(key))
-                    log("${FILES[key].name}, delete: ${FILES[key].delete()}")
+                    MainActivity().log("${FILES[key].name}, delete: ${FILES[key].delete()}")
 
             }
         }
