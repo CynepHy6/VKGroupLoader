@@ -35,4 +35,5 @@
     <string name="description_image_preview">Image Preview</string>
     <string name="vk_login">VK Login</string>
     <string name="vk_logout">VK Logout</string>
+    <string name="label_invert">Invert</string>
 </resources>

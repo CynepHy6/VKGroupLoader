@@ -30,39 +30,43 @@ import java.io.FileFilter
 import java.text.SimpleDateFormat
 import java.util.Date
 import kotlin.properties.Delegates
-val DEBUG = true
 
+val DEBUG = true
+val TAG = "simplelog"
 val DEFAULT_GROUP = if (DEBUG) 98059938 else 18267412
 val CHANGE_GROUP_REQUEST_CODE = 1
 val A_GROUP_ID = "vk_group"
 //val A_MESSAGE = "message"
 val A_LAST_POST_ID = "last_post_id"
 
-val STORAGE: File by Delegates.lazy {
-    val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "VKGroUploader")
-    if (!d.exists())
-        d.mkdir()
-    d
-}
-
-val STORAGE_SENDOUT: File by Delegates.lazy {
-    val d = File(STORAGE.getAbsoluteFile(), "Sendout")
-    if (!d.exists())
-        d.mkdir()
-    d
-}
 var activeDirectory: File by Delegates.notNull()
 
-fun log(s: String) = {
-    if (DEBUG) Log.d("simpleLog", s)
-}
-
 public class MainActivity : Activity(), View.OnClickListener {
+
+    private val STORAGE: File by Delegates.lazy {
+        val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "VKGroUploader")
+        if (!d.exists())
+            d.mkdir()
+        d
+    }
+
+    private val STORAGE_SENDOUT: File by Delegates.lazy {
+        val d = File(STORAGE.getAbsoluteFile(), "Sendout")
+        if (!d.exists())
+            d.mkdir()
+        d
+    }
     private var vk_group_id: Int by Delegates.notNull()
     private var message_text: String by Delegates.notNull()
     private var last_post_id: Int by Delegates.notNull()
 
     private var pref: SharedPreferences by Delegates.notNull()
+
+    fun log(s: String) = {
+        if (DEBUG) {
+            Log.d(TAG, s)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super<Activity>.onCreate(savedInstanceState)
@@ -91,7 +95,7 @@ public class MainActivity : Activity(), View.OnClickListener {
     override fun onResume() {
         super<Activity>.onResume()
         loadSettings()
-        updateLabelLoginButton()
+        updateButtonLogin()
         updateListFiles()
     }
 
@@ -133,7 +137,7 @@ public class MainActivity : Activity(), View.OnClickListener {
         tvStorageListFiles.setText(sb.toString())
     }
 
-    private fun updateLabelLoginButton() {
+    private fun updateButtonLogin() {
         if (!VKSdk.wakeUpSession(this)) {
             bLogin.setText(R.string.label_vk_login)
         } else {
@@ -145,7 +149,7 @@ public class MainActivity : Activity(), View.OnClickListener {
         pref = getPreferences(Context.MODE_PRIVATE)
         vk_group_id = pref.getInt(A_GROUP_ID, DEFAULT_GROUP)
         bGroup.setText("${vk_group_id}")
-//        message_text = pref.getString(A_MESSAGE, getDefaultMessage())
+        //        message_text = pref.getString(A_MESSAGE, getDefaultMessage())
         message_text = getDefaultMessage()
         etMessage.setText(message_text)
         last_post_id = pref.getInt(A_LAST_POST_ID, 0)
@@ -155,9 +159,7 @@ public class MainActivity : Activity(), View.OnClickListener {
         pref = getPreferences(Context.MODE_PRIVATE)
         val ed = pref.edit()
         vk_group_id = if ("${bGroup.getText()}" == "") DEFAULT_GROUP else "${bGroup.getText()}".toInt()
-//        message_text = if ("${etMessage.getText()}" == "") getDefaultMessage() else "${etMessage.getText()}"
         ed.putInt(A_GROUP_ID, vk_group_id)
-//        ed.putString(A_MESSAGE, message_text)
         ed.putInt(A_LAST_POST_ID, last_post_id)
         ed.commit()
     }
@@ -165,13 +167,13 @@ public class MainActivity : Activity(), View.OnClickListener {
     private fun getDefaultMessage(): String {
         val today = getResources().getText(R.string.today)
         val about = getResources().getText(R.string.about)
-        val file = getStorageFiles().first()
-        val date = if (file.exists())
-            Math.round((file.lastModified()/600000).toDouble())*600000
-            else
-                Date()
-        val s = SimpleDateFormat("${today} dd MMMM ${about} HH.mm ").format(date)
-        return s
+        val file = getStorageFiles().firstOrNull()
+        if (file != null) {
+            val date = Math.round((file.lastModified() / 600000).toDouble()) * 600000
+            return SimpleDateFormat("${today} dd MMMM ${about} HH.mm ").format(date)
+        } else {
+            return ""
+        }
     }
 
     private fun actionLogin() {
@@ -182,7 +184,7 @@ public class MainActivity : Activity(), View.OnClickListener {
             log("touch Logout")
             VKSdk.logout()
         }
-        updateLabelLoginButton()
+        updateButtonLogin()
     }
 
     private fun actionDeleteMessage() {
@@ -195,11 +197,11 @@ public class MainActivity : Activity(), View.OnClickListener {
         saveSettings()
 
         if (isOnline() && VKSdk.isLoggedIn()) {
-            if (getStorageFiles().size() == 0 && message_text == "" ){
+            if (getStorageFiles().size() == 0 && message_text == "" ) {
                 toast(R.string.message_send_nothing)
-            }else if(getStorageFiles().size() == 0 && message_text != ""){
+            } else if (getStorageFiles().size() == 0 && message_text != "") {
                 updateLastPost(last_post_id)
-            }else {
+            } else {
                 toast(R.string.message_run_send)
                 sendPhotos()
             }
@@ -244,6 +246,7 @@ public class MainActivity : Activity(), View.OnClickListener {
                 log("sendPhotos: SUCCESS")
                 cleanStorageDir()
                 updateListFiles()
+                updateMessage()
             }
 
             override fun onError(error: VKError?) {
@@ -251,6 +254,11 @@ public class MainActivity : Activity(), View.OnClickListener {
             }
         })
 
+    }
+
+    private fun updateMessage() {
+        message_text = getDefaultMessage()
+        etMessage.setText(message_text)
     }
 
     private fun makePost(attach: VKAttachments, msg: String) {
@@ -261,6 +269,7 @@ public class MainActivity : Activity(), View.OnClickListener {
                 log("Post SUCCESSFULLY send")
                 toast(R.string.message_success_sendout)
             }
+
             override fun onError(error: VKError?) {
                 log("makePost ERROR")
             }

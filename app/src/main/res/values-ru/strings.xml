@@ -27,4 +27,5 @@
     <string name="today">Сегодня </string>
     <string name="label_vk_login">ВК войти</string>
     <string name="label_vk_logout">ВК выйти</string>
+    <string name="label_invert">Инвертировать</string>
 </resources>

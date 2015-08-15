@@ -17,18 +17,31 @@
         android:id="@+id/lvListFiles"
         android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp"
+        android:choiceMode="multipleChoice"/>
     <LinearLayout
         android:id="@+id/llButtonBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_horizontal">
+        >
         <Button
             android:text="@string/label_delete_button"
             android:id="@+id/bDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_invert"
+            android:id="@+id/bInvert"
+            android:visibility="gone"/>
     </LinearLayout>
 
 
