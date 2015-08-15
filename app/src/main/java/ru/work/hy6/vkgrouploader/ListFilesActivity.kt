@@ -1,8 +1,9 @@
-package ru.work.hy6.simplecamerawork
+package ru.work.hy6.vkgrouploader
 
 import android.app.Activity
 import android.database.DataSetObserver
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AbsListView
 import android.widget.AdapterView
@@ -15,7 +16,7 @@ import java.io.FileFilter
 import kotlin.properties.Delegates
 
 public class ListFilesActivity() : Activity(), View.OnClickListener {
-
+    private val TAG = "ListFilesActivity"
     private val DIRECTORY = activeDirectory
     private val FILES: Array<out File> by Delegates.lazy {
         DIRECTORY.listFiles(FileFilter { !it.isDirectory() })
@@ -27,6 +28,11 @@ public class ListFilesActivity() : Activity(), View.OnClickListener {
     private var isItemСheck = false
 
 
+    private fun log(s: String) = {
+        if (DEBUG) {
+            Log.d(TAG, s)
+        }
+    }
     // TODO: CustomAdapter<Array<Bitmap>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,7 +98,7 @@ public class ListFilesActivity() : Activity(), View.OnClickListener {
             for (i in 0..FILES.size() - 1) {
                 val key = sba.keyAt(i)
                 if (sba.get(key))
-                    MainActivity().log("${FILES[key].name}, delete: ${FILES[key].delete()}")
+                    log("${FILES[key].name}, delete: ${FILES[key].delete()}")
 
             }
         }

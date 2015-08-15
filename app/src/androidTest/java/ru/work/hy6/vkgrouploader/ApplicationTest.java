@@ -1,4 +1,4 @@
-package ru.work.hy6.simplecamerawork;
+package ru.work.hy6.vkgrouploader;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

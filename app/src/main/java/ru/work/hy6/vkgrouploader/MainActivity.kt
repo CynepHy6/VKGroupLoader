@@ -1,4 +1,4 @@
-package ru.work.hy6.simplecamerawork
+package ru.work.hy6.vkgrouploader
 
 import android.app.Activity
 import android.content.Context
@@ -31,17 +31,16 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import kotlin.properties.Delegates
 
-val DEBUG = true
-val TAG = "simplelog"
+val DEBUG = false
 val DEFAULT_GROUP = if (DEBUG) 98059938 else 18267412
 val CHANGE_GROUP_REQUEST_CODE = 1
 val A_GROUP_ID = "vk_group"
-//val A_MESSAGE = "message"
 val A_LAST_POST_ID = "last_post_id"
 
 var activeDirectory: File by Delegates.notNull()
 
 public class MainActivity : Activity(), View.OnClickListener {
+    private val TAG = "MainActivity"
 
     private val STORAGE: File by Delegates.lazy {
         val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "VKGroUploader")
@@ -62,7 +61,7 @@ public class MainActivity : Activity(), View.OnClickListener {
 
     private var pref: SharedPreferences by Delegates.notNull()
 
-    fun log(s: String) = {
+    private fun log(s: String) = {
         if (DEBUG) {
             Log.d(TAG, s)
         }
@@ -149,7 +148,6 @@ public class MainActivity : Activity(), View.OnClickListener {
         pref = getPreferences(Context.MODE_PRIVATE)
         vk_group_id = pref.getInt(A_GROUP_ID, DEFAULT_GROUP)
         bGroup.setText("${vk_group_id}")
-        //        message_text = pref.getString(A_MESSAGE, getDefaultMessage())
         message_text = getDefaultMessage()
         etMessage.setText(message_text)
         last_post_id = pref.getInt(A_LAST_POST_ID, 0)
@@ -313,7 +311,7 @@ public class MainActivity : Activity(), View.OnClickListener {
 
     private fun actionGroupName() {
         log("touch actionGroupName")
-        val intent = Intent(this, javaClass<GroupNameActivity>())
+        val intent = Intent(this, javaClass<GroupIdActivity>())
         startActivityForResult(intent, CHANGE_GROUP_REQUEST_CODE)
     }
 
@@ -331,7 +329,7 @@ public class MainActivity : Activity(), View.OnClickListener {
 
 }
 
-class GroupNameActivity : Activity() {
+class GroupIdActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.a_group_name)

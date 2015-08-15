@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="ru.work.hy6.simplecamerawork.ListFilesActivity">
+    tools:context="ru.work.hy6.vkgrouploader.ListFilesActivity">
 
     <TextView
         android:layout_width="match_parent"
