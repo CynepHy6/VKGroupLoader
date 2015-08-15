@@ -25,6 +25,7 @@ import com.vk.sdk.api.photo.VKUploadImage
 import kotlinx.android.synthetic.a_group_name.bOK
 import kotlinx.android.synthetic.a_group_name.etGroup
 import kotlinx.android.synthetic.main.*
+import org.json.JSONObject
 import java.io.File
 import java.io.FileFilter
 import java.text.SimpleDateFormat
@@ -55,13 +56,14 @@ public class MainActivity : Activity(), View.OnClickListener {
             d.mkdir()
         d
     }
-    private var vk_group_id: Int by Delegates.notNull()
+    private var group_id: Int by Delegates.notNull()
     private var message_text: String by Delegates.notNull()
     private var last_post_id: Int by Delegates.notNull()
+    private var isGroupIdUpdated = true
 
     private var pref: SharedPreferences by Delegates.notNull()
 
-    private fun log(s: String) = {
+    private fun mylog(s: String) = {
         if (DEBUG) {
             Log.d(TAG, s)
         }
@@ -77,7 +79,7 @@ public class MainActivity : Activity(), View.OnClickListener {
         bPhoto.setOnClickListener(this)
         bDeleteMessage.setOnClickListener(this)
         bLogin.setOnClickListener(this)
-        bGroup.setOnClickListener(this)
+        bGroupId.setOnClickListener(this)
         bDelete.setOnClickListener(this)
         bDelete.setOnLongClickListener {
             activeDirectory = STORAGE_SENDOUT
@@ -96,6 +98,7 @@ public class MainActivity : Activity(), View.OnClickListener {
         loadSettings()
         updateButtonLogin()
         updateListFiles()
+        updateGroupName()
     }
 
     override fun onPause() {
@@ -121,8 +124,8 @@ public class MainActivity : Activity(), View.OnClickListener {
             bSend -> {
                 actionSend()
             }
-            bGroup -> {
-                actionGroupName()
+            bGroupId -> {
+                actionGroupId()
             }
         }
     }
@@ -136,6 +139,34 @@ public class MainActivity : Activity(), View.OnClickListener {
         tvStorageListFiles.setText(sb.toString())
     }
 
+    private fun updateGroupName() {
+        if (!isGroupIdUpdated) return
+
+        val request = VKApi.groups().getById(VKParameters.from(VKApiConst.GROUP_ID, group_id))
+        request.executeWithListener(object: VKRequest.VKRequestListener(){
+            override fun onComplete(response: VKResponse?) {
+                super.onComplete(response)
+                if (response != null){
+                    if (DEBUG) Log.d(TAG, "request COMPLETE")
+                    parseResponse(response)
+                }
+            }
+
+            override fun onError(error: VKError?) {
+                if (DEBUG) Log.d(TAG, "updateGroupName request ERROR")
+            }
+        })
+        isGroupIdUpdated = false
+    }
+
+    private fun parseResponse(response: VKResponse) {
+        val json = response.json.getJSONArray("response")
+        val name = (json[0] as JSONObject).get("name")
+        if (DEBUG) Log.d(TAG, "${json}")
+        if (DEBUG) Log.d(TAG, "name: ${name}")
+        tvGroupName.setText("${name}")
+    }
+
     private fun updateButtonLogin() {
         if (!VKSdk.wakeUpSession(this)) {
             bLogin.setText(R.string.label_vk_login)
@@ -146,8 +177,8 @@ public class MainActivity : Activity(), View.OnClickListener {
 
     private fun loadSettings() {
         pref = getPreferences(Context.MODE_PRIVATE)
-        vk_group_id = pref.getInt(A_GROUP_ID, DEFAULT_GROUP)
-        bGroup.setText("${vk_group_id}")
+        group_id = pref.getInt(A_GROUP_ID, DEFAULT_GROUP)
+        bGroupId.setText("${group_id}")
         message_text = getDefaultMessage()
         etMessage.setText(message_text)
         last_post_id = pref.getInt(A_LAST_POST_ID, 0)
@@ -156,8 +187,8 @@ public class MainActivity : Activity(), View.OnClickListener {
     private fun saveSettings() {
         pref = getPreferences(Context.MODE_PRIVATE)
         val ed = pref.edit()
-        vk_group_id = if ("${bGroup.getText()}" == "") DEFAULT_GROUP else "${bGroup.getText()}".toInt()
-        ed.putInt(A_GROUP_ID, vk_group_id)
+        group_id = if ("${bGroupId.getText()}" == "") DEFAULT_GROUP else "${bGroupId.getText()}".toInt()
+        ed.putInt(A_GROUP_ID, group_id)
         ed.putInt(A_LAST_POST_ID, last_post_id)
         ed.commit()
     }
@@ -176,22 +207,22 @@ public class MainActivity : Activity(), View.OnClickListener {
 
     private fun actionLogin() {
         if (!VKSdk.wakeUpSession(this)) {
-            log("touch Login")
+            mylog("touch Login")
             VKSdk.login(this, VKScope.GROUPS, VKScope.WALL, VKScope.PHOTOS)
         } else {
-            log("touch Logout")
+            mylog("touch Logout")
             VKSdk.logout()
         }
         updateButtonLogin()
     }
 
     private fun actionDeleteMessage() {
-        log("touch Comment")
+        mylog("touch Comment")
         etMessage.setText("")
     }
 
     private fun actionSend() {
-        log("touch Send")
+        mylog("touch Send")
         saveSettings()
 
         if (isOnline() && VKSdk.isLoggedIn()) {
@@ -210,8 +241,8 @@ public class MainActivity : Activity(), View.OnClickListener {
         }
     }
 
-    private fun updateLastPost(id: Int) {
-        log("update last post ${id}")
+    private fun updateLastPost(id: Int) { //TODO this
+        mylog("update last post ${id}")
     }
 
     private fun isOnline(): Boolean {
@@ -225,14 +256,14 @@ public class MainActivity : Activity(), View.OnClickListener {
         val requests = Array(files.size(), { it -> VKRequest("") })
         for ((i, file) in files.withIndex()) {
             val bitmap = getBitmap(file.getAbsoluteFile())
-            val request = VKApi.uploadWallPhotoRequest(VKUploadImage(bitmap, VKImageParameters.jpgImage(0.9f)), 0, vk_group_id);
+            val request = VKApi.uploadWallPhotoRequest(VKUploadImage(bitmap, VKImageParameters.jpgImage(0.9f)), 0, group_id);
             requests[i] = request
         }
         val batch = VKBatchRequest(*requests)
         batch.executeWithListener(object : VKBatchRequest.VKBatchRequestListener() {
             override fun onComplete(responses: Array<out VKResponse>?) {
                 if (responses == null) {
-                    log("sendPhotos: responses is NULL")
+                    mylog("sendPhotos: responses is NULL")
                     return
                 }
                 val attachments = VKAttachments()
@@ -241,14 +272,14 @@ public class MainActivity : Activity(), View.OnClickListener {
                     attachments.add(photoModel)
                 }
                 makePost(attachments, message_text)
-                log("sendPhotos: SUCCESS")
+                mylog("sendPhotos: SUCCESS")
                 cleanStorageDir()
                 updateListFiles()
                 updateMessage()
             }
 
             override fun onError(error: VKError?) {
-                log("sendPhotos: error")
+                mylog("sendPhotos: error")
             }
         })
 
@@ -260,16 +291,16 @@ public class MainActivity : Activity(), View.OnClickListener {
     }
 
     private fun makePost(attach: VKAttachments, msg: String) {
-        val post = VKApi.wall().post(VKParameters.from(VKApiConst.OWNER_ID, "-${vk_group_id}", VKApiConst.ATTACHMENTS, attach, VKApiConst.MESSAGE, msg));
+        val post = VKApi.wall().post(VKParameters.from(VKApiConst.OWNER_ID, "-${group_id}", VKApiConst.ATTACHMENTS, attach, VKApiConst.MESSAGE, msg));
         post.setModelClass(javaClass<VKWallPostResult>())
         post.executeWithListener(object : VKRequest.VKRequestListener() {
             override fun onComplete(response: VKResponse?) {
-                log("Post SUCCESSFULLY send")
+                mylog("Post SUCCESSFULLY send")
                 toast(R.string.message_success_sendout)
             }
 
             override fun onError(error: VKError?) {
-                log("makePost ERROR")
+                mylog("makePost ERROR")
             }
         })
     }
@@ -282,13 +313,13 @@ public class MainActivity : Activity(), View.OnClickListener {
     }
 
     private fun actionListFiles() {
-        log("touch List Files")
+        mylog("touch List Files")
         val intent = Intent(this, javaClass<ListFilesActivity>())
         startActivity(intent)
     }
 
     private fun actionPhoto() {
-        log("creating photo")
+        mylog("creating photo")
         val file = getNewFileForImage()
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file))
@@ -306,23 +337,26 @@ public class MainActivity : Activity(), View.OnClickListener {
 
     private fun toast(res: Int) {
         Toast.makeText(this, res, Toast.LENGTH_SHORT).show()
-        log("${getResources().getText(res)}")
+        mylog("${getResources().getText(res)}")
     }
 
-    private fun actionGroupName() {
-        log("touch actionGroupName")
+    private fun actionGroupId() {
+        mylog("touch actionGroupName")
         val intent = Intent(this, javaClass<GroupIdActivity>())
         startActivityForResult(intent, CHANGE_GROUP_REQUEST_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super<Activity>.onActivityResult(requestCode, resultCode, data)
-        log("onActivityResult")
+        mylog("onActivityResult")
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CHANGE_GROUP_REQUEST_CODE && data != null) {
                 val group = data.getStringExtra(A_GROUP_ID)
-                bGroup.setText(group)
+                bGroupId.setText(group)
                 saveSettings()
+                isGroupIdUpdated = true
+                updateGroupName()
+
             }
         }
     }

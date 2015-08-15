@@ -14,7 +14,8 @@
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/label_vk_group_id">
+            android:text="@string/label_group_id"
+            android:textColor="@android:color/black">
         </TextView>
         <EditText
             android:id="@+id/etGroup"
@@ -23,7 +24,10 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:inputType="number"
-            android:hint="@string/hint_enter_vk_group">
+            android:hint="@string/hint_enter_vk_group"
+            android:maxLines="1"
+            android:maxLength="8"
+            android:ellipsize="end">
             <requestFocus>
             </requestFocus>
         </EditText>

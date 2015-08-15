@@ -5,12 +5,11 @@
     <string name="hint_message">Введите текст сообщения</string>
     <string name="label_files_in">файлы/в/хранилище/</string>
     <string name="label_get_photo_button">Сфотографировать</string>
-    <string name="label_group">ID группы:</string>
     <string name="label_list_files">Список файлов в каталоге</string>
     <string name="message_success_sendout">Сообщение отправленно</string>
     <string name="label_send_button">Отправить</string>
     <string name="label_message">Сообщение: </string>
-    <string name="label_vk_group_id">ID группы:</string>
+    <string name="label_group_id">ID:</string>
     <string name="label_OK_button">Готово</string>
     <string name="hint_enter_vk_group">Введите ИД группы Вконтакте</string>
     <string name="message_internet_off">Интернет недоступен. Не могу отправить сообщение</string>
@@ -28,4 +27,5 @@
     <string name="label_vk_login">ВК войти</string>
     <string name="label_vk_logout">ВК выйти</string>
     <string name="label_invert">Инвертировать</string>
+    <string name="label_name">Имя:</string>
 </resources>

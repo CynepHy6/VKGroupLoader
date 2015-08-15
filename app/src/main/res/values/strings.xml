@@ -10,11 +10,10 @@
     <string name="label_send_button">send</string>
     <string name="label_clear_message">Clear</string>
     <string name="label_list_files">List Files in storage</string>
-    <string name="label_group">Group ID:</string>
     <string name="label_back_button">Back</string>
     <string name="label_message">Message:</string>
     <string name="label_OK_button">OK</string>
-    <string name="label_vk_group_id">Group ID:</string>
+    <string name="label_group_id">ID:</string>
     <string name="label_sent_button">Sent</string>
     <string name="label_delete_button">Delete</string>
     <string name="label_files_in">files/in/storage/clear/when/run</string>
@@ -33,7 +32,6 @@
     <string name="about">of the order of </string>
 
     <string name="description_image_preview">Image Preview</string>
-    <string name="vk_login">VK Login</string>
-    <string name="vk_logout">VK Logout</string>
     <string name="label_invert">Invert</string>
+    <string name="label_name">Name:</string>
 </resources>
