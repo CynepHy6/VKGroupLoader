@@ -7,8 +7,6 @@
     <string name="label_get_photo_button">Сфотографировать</string>
     <string name="label_group">ID группы:</string>
     <string name="label_list_files">Список файлов в каталоге</string>
-    <string name="label_vk_login">ВК Войти</string>
-    <string name="label_vk_logout">ВК Выйти</string>
     <string name="message_success_sendout">Сообщение отправленно</string>
     <string name="label_send_button">Отправить</string>
     <string name="label_message">Сообщение: </string>
@@ -25,4 +23,8 @@
     <string name="message_logoff">Необходимо войти в Вконтакт</string>
     <string name="label_back_button">Назад</string>
     <string name="message_send_nothing">Нечего отправлять</string>
+    <string name="about">примерно в </string>
+    <string name="today">Сегодня </string>
+    <string name="label_vk_login">ВК войти</string>
+    <string name="label_vk_logout">ВК выйти</string>
 </resources>

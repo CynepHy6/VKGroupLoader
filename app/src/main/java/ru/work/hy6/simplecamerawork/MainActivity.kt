@@ -33,10 +33,10 @@ import kotlin.properties.Delegates
 val DEBUG = true
 
 val DEFAULT_GROUP = if (DEBUG) 98059938 else 18267412
-val DEFAULT_MESSAGE = ""
 val CHANGE_GROUP_REQUEST_CODE = 1
 val A_GROUP_ID = "vk_group"
-val A_MESSAGE = "message"
+//val A_MESSAGE = "message"
+val A_LAST_POST_ID = "last_post_id"
 
 val STORAGE: File by Delegates.lazy {
     val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "VKGroUploader")
@@ -60,8 +60,9 @@ fun log(s: String) = {
 public class MainActivity : Activity(), View.OnClickListener {
     private var vk_group_id: Int by Delegates.notNull()
     private var message_text: String by Delegates.notNull()
+    private var last_post_id: Int by Delegates.notNull()
 
-    private var sPref: SharedPreferences by Delegates.notNull()
+    private var pref: SharedPreferences by Delegates.notNull()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super<Activity>.onCreate(savedInstanceState)
@@ -141,21 +142,36 @@ public class MainActivity : Activity(), View.OnClickListener {
     }
 
     private fun loadSettings() {
-        sPref = getPreferences(Context.MODE_PRIVATE)
-        vk_group_id = sPref.getInt(A_GROUP_ID, DEFAULT_GROUP)
+        pref = getPreferences(Context.MODE_PRIVATE)
+        vk_group_id = pref.getInt(A_GROUP_ID, DEFAULT_GROUP)
         bGroup.setText("${vk_group_id}")
-        message_text = sPref.getString(A_MESSAGE, DEFAULT_MESSAGE)
+//        message_text = pref.getString(A_MESSAGE, getDefaultMessage())
+        message_text = getDefaultMessage()
         etMessage.setText(message_text)
+        last_post_id = pref.getInt(A_LAST_POST_ID, 0)
     }
 
     private fun saveSettings() {
-        sPref = getPreferences(Context.MODE_PRIVATE)
-        val ed = sPref.edit()
+        pref = getPreferences(Context.MODE_PRIVATE)
+        val ed = pref.edit()
         vk_group_id = if ("${bGroup.getText()}" == "") DEFAULT_GROUP else "${bGroup.getText()}".toInt()
-        message_text = if ("${etMessage.getText()}" == "") DEFAULT_MESSAGE else "${etMessage.getText()}"
+//        message_text = if ("${etMessage.getText()}" == "") getDefaultMessage() else "${etMessage.getText()}"
         ed.putInt(A_GROUP_ID, vk_group_id)
-        ed.putString(A_MESSAGE, message_text)
+//        ed.putString(A_MESSAGE, message_text)
+        ed.putInt(A_LAST_POST_ID, last_post_id)
         ed.commit()
+    }
+
+    private fun getDefaultMessage(): String {
+        val today = getResources().getText(R.string.today)
+        val about = getResources().getText(R.string.about)
+        val file = getStorageFiles().first()
+        val date = if (file.exists())
+            Math.round((file.lastModified()/600000).toDouble())*600000
+            else
+                Date()
+        val s = SimpleDateFormat("${today} dd MMMM ${about} HH.mm ").format(date)
+        return s
     }
 
     private fun actionLogin() {
@@ -179,8 +195,10 @@ public class MainActivity : Activity(), View.OnClickListener {
         saveSettings()
 
         if (isOnline() && VKSdk.isLoggedIn()) {
-            if (getStorageFiles().size() != 0 || message_text == "" ){
+            if (getStorageFiles().size() == 0 && message_text == "" ){
                 toast(R.string.message_send_nothing)
+            }else if(getStorageFiles().size() == 0 && message_text != ""){
+                updateLastPost(last_post_id)
             }else {
                 toast(R.string.message_run_send)
                 sendPhotos()
@@ -190,6 +208,10 @@ public class MainActivity : Activity(), View.OnClickListener {
         } else if (!isOnline()) {
             toast(R.string.message_internet_off)
         }
+    }
+
+    private fun updateLastPost(id: Int) {
+        log("update last post ${id}")
     }
 
     private fun isOnline(): Boolean {
@@ -231,12 +253,25 @@ public class MainActivity : Activity(), View.OnClickListener {
 
     }
 
+    private fun makePost(attach: VKAttachments, msg: String) {
+        val post = VKApi.wall().post(VKParameters.from(VKApiConst.OWNER_ID, "-${vk_group_id}", VKApiConst.ATTACHMENTS, attach, VKApiConst.MESSAGE, msg));
+        post.setModelClass(javaClass<VKWallPostResult>())
+        post.executeWithListener(object : VKRequest.VKRequestListener() {
+            override fun onComplete(response: VKResponse?) {
+                log("Post SUCCESSFULLY send")
+                toast(R.string.message_success_sendout)
+            }
+            override fun onError(error: VKError?) {
+                log("makePost ERROR")
+            }
+        })
+    }
+
     private fun cleanStorageDir() {
         val files = getStorageFiles()
         for (file in files) {
             file.renameTo(File(STORAGE_SENDOUT.getAbsoluteFile(), file.name))
         }
-
     }
 
     private fun actionListFiles() {
@@ -253,27 +288,12 @@ public class MainActivity : Activity(), View.OnClickListener {
         startActivity(intent)
     }
 
-    private fun makePost(attach: VKAttachments, msg: String) {
-        val post = VKApi.wall().post(VKParameters.from(VKApiConst.OWNER_ID, "-${vk_group_id}", VKApiConst.ATTACHMENTS, attach, VKApiConst.MESSAGE, msg));
-        post.setModelClass(javaClass<VKWallPostResult>())
-        post.executeWithListener(object : VKRequest.VKRequestListener() {
-            override fun onComplete(response: VKResponse?) {
-                log("Post SUCCESSFULLY send")
-                toast(R.string.message_success_sendout)
-            }
-
-            override fun onError(error: VKError?) {
-                log("makePost ERROR")
-            }
-        })
-    }
-
     fun getBitmap(file: File): Bitmap = BitmapFactory.decodeFile(file.getAbsolutePath())
 
     fun getStorageFiles(): Array<out File> = STORAGE.listFiles(FileFilter { !it.isDirectory() })
 
     private fun getNewFileForImage(): File {
-        val fileName = "SCW_${SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())}.jpg"
+        val fileName = "VKGU_${SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())}.jpg"
         return File(STORAGE.getAbsolutePath(), fileName)
     }
 

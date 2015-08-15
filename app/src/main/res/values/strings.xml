@@ -29,6 +29,10 @@
     <string name="message_logoff">Need login into vk.com</string>
     <string name="message_run_send">Sending message..</string>
     <string name="message_send_nothing">Nothing send..</string>
+    <string name="today">Today </string>
+    <string name="about">of the order of </string>
 
     <string name="description_image_preview">Image Preview</string>
+    <string name="vk_login">VK Login</string>
+    <string name="vk_logout">VK Logout</string>
 </resources>
