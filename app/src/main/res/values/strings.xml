@@ -34,4 +34,7 @@
     <string name="description_image_preview">Image Preview</string>
     <string name="label_invert">Invert</string>
     <string name="label_name">Name:</string>
+    <string name="title_activity_image_files">ImageFilesActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

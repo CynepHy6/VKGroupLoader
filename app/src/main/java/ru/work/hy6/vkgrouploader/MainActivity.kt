@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -40,7 +41,7 @@ val A_LAST_POST_ID = "last_post_id"
 
 var activeDirectory: File by Delegates.notNull()
 
-public class MainActivity : Activity(), View.OnClickListener {
+public class MainActivity : AppCompatActivity(), View.OnClickListener {
     private val TAG = "MainActivity"
 
     private val STORAGE: File by Delegates.lazy {
@@ -70,7 +71,7 @@ public class MainActivity : Activity(), View.OnClickListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super<Activity>.onCreate(savedInstanceState)
+        super<AppCompatActivity>.onCreate(savedInstanceState)
         VKSdk.initialize(this)
         setContentView(R.layout.main)
 
@@ -94,7 +95,7 @@ public class MainActivity : Activity(), View.OnClickListener {
     }
 
     override fun onResume() {
-        super<Activity>.onResume()
+        super<AppCompatActivity>.onResume()
         loadSettings()
         updateButtonLogin()
         updateListFiles()
@@ -102,7 +103,7 @@ public class MainActivity : Activity(), View.OnClickListener {
     }
 
     override fun onPause() {
-        super<Activity>.onPause()
+        super<AppCompatActivity>.onPause()
         saveSettings()
     }
 
@@ -347,7 +348,7 @@ public class MainActivity : Activity(), View.OnClickListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super<Activity>.onActivityResult(requestCode, resultCode, data)
+        super<AppCompatActivity>.onActivityResult(requestCode, resultCode, data)
         mylog("onActivityResult")
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CHANGE_GROUP_REQUEST_CODE && data != null) {
@@ -363,7 +364,7 @@ public class MainActivity : Activity(), View.OnClickListener {
 
 }
 
-class GroupIdActivity : Activity() {
+class GroupIdActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.a_group_name)

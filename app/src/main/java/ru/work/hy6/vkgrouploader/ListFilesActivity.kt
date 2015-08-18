@@ -3,6 +3,7 @@ package ru.work.hy6.vkgrouploader
 import android.app.Activity
 import android.database.DataSetObserver
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.AbsListView
@@ -15,7 +16,7 @@ import java.io.File
 import java.io.FileFilter
 import kotlin.properties.Delegates
 
-public class ListFilesActivity() : Activity(), View.OnClickListener {
+public class ListFilesActivity() : AppCompatActivity(), View.OnClickListener {
     private val TAG = "ListFilesActivity"
     private val DIRECTORY = activeDirectory
     private val FILES: Array<out File> by Delegates.lazy {
@@ -36,7 +37,7 @@ public class ListFilesActivity() : Activity(), View.OnClickListener {
     // TODO: CustomAdapter<Array<Bitmap>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super<Activity>.onCreate(savedInstanceState)
+        super<AppCompatActivity>.onCreate(savedInstanceState)
         setContentView(R.layout.a_list_files)
 
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, NAMES)
