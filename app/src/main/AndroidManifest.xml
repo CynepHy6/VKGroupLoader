@@ -35,10 +35,6 @@
             android:name=".ListFilesActivity"
             android:label="@string/title_activity_list_files" >
         </activity>
-        <activity
-            android:name=".ImageFilesActivity"
-            android:label="@string/title_activity_image_files" >
-        </activity>
     </application>
 
 </manifest>

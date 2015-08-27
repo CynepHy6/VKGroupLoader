@@ -72,8 +72,8 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super<AppCompatActivity>.onCreate(savedInstanceState)
-        VKSdk.initialize(this)
         setContentView(R.layout.main)
+        VKSdk.initialize(this)
 
         tvStorageListFiles.setOnClickListener(this)
         bSend.setOnClickListener(this)

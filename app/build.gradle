@@ -7,9 +7,9 @@ android {
 
     defaultConfig {
         applicationId "ru.work.hy6.vkgrouploader"
-        minSdkVersion 14
+        minSdkVersion 15
         targetSdkVersion 22
-        versionCode 6
+        versionCode 7
         versionName "0.9.02"
     }
     buildTypes {
@@ -18,7 +18,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            versionNameSuffix 'beta'
+            versionNameSuffix 'b'
         }
     }
     sourceSets {
@@ -28,10 +28,9 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:appcompat-v7:+'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.vk:androidsdk:1.5.+'
+    compile project(':vksdk_library')
 }
 buildscript {
     ext.kotlin_version = '0.12.1230'
