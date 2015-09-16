@@ -81,18 +81,20 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:minHeight="150dp">
 
         <EditText
             android:id="@+id/etMessage"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:hint="@string/hint_message"
             android:inputType="textAutoComplete|textMultiLine"
             android:gravity="center_vertical|center_horizontal"
-            android:minLines="1"/>
+            android:layout_weight="12"
+            android:minLines="1"
+            />
 
         <ImageButton
             android:id="@+id/bDeleteMessage"
@@ -103,54 +105,55 @@
             android:minHeight="100dp"
             android:minWidth="50dp"
             android:visibility="gone"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:minHeight="100dp">
-
-        <TextView
-            android:id="@+id/labelListFiles"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/label_files_in"
-            android:textSize="16sp"
-            />
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:minHeight="100dp"
+            android:layout_weight="8">
 
-            <ScrollView
-                android:id="@+id/svListFiles"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:fillViewport="true">
-
-                <TextView
-                    android:id="@+id/tvStorageListFiles"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
-            </ScrollView>
-
-            <ImageButton
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/labelListFiles"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/label_sent_button"
-                android:id="@+id/bDelete"
-                android:src="@android:drawable/ic_menu_delete"
-                android:minHeight="100dp"
-                android:minWidth="50dp"/>
-        </LinearLayout>
+                android:text="@string/label_files_in"
+                android:textSize="16sp"
+                />
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ScrollView
+                    android:id="@+id/svListFiles"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:fillViewport="true">
+
+                    <TextView
+                        android:id="@+id/tvStorageListFiles"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                </ScrollView>
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/label_sent_button"
+                    android:id="@+id/bDelete"
+                    android:src="@android:drawable/ic_menu_delete"
+                    android:minHeight="100dp"
+                    android:minWidth="50dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

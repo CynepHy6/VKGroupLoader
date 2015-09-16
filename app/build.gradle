@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "ru.work.hy6.vkgrouploader"
         minSdkVersion 15
-        targetSdkVersion 22
-        versionCode 7
-        versionName "0.9.02"
+        targetSdkVersion 23
+        versionCode 8
+        versionName "0.9.10"
     }
     buildTypes {
         release {
@@ -33,7 +33,7 @@ dependencies {
     compile project(':vksdk_library')
 }
 buildscript {
-    ext.kotlin_version = '0.12.1230'
+    ext.kotlin_version = '0.12.+'
     repositories {
         mavenCentral()
     }
