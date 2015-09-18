@@ -28,4 +28,5 @@
     <string name="label_vk_logout">ВК выйти</string>
     <string name="label_invert">Инвертировать</string>
     <string name="label_name">Имя:</string>
+    <string name="change_group_id">ID группы</string>
 </resources>

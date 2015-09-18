@@ -31,12 +31,20 @@
             <requestFocus>
             </requestFocus>
         </EditText>
+
+        <Button
+            android:id="@+id/bOK"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/label_OK_button">
+        </Button>
     </LinearLayout>
-    <Button
-        android:id="@+id/bOK"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/label_OK_button">
-    </Button>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/lvGroupId"
+        android:choiceMode="singleChoice"
+        android:layout_weight="1"/>
 </LinearLayout>

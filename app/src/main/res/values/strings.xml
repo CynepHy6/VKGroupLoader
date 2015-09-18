@@ -37,4 +37,5 @@
     <string name="title_activity_image_files">ImageFilesActivity</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="change_group_id">Group ID</string>
 </resources>
