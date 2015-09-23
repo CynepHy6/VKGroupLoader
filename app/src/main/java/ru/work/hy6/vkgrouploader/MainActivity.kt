@@ -8,10 +8,8 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
@@ -29,7 +27,6 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileFilter
 import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.properties.Delegates
 
 
@@ -43,22 +40,22 @@ val A_GROUPS = "groups_set"
 
 var activeDirectory: File by Delegates.notNull()
 
+val STORAGE: File by lazy(LazyThreadSafetyMode.NONE) {
+    val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "VKGroUploader")
+    if (!d.exists())
+        d.mkdir()
+    d
+}
+val STORAGE_SENDOUT: File by lazy(LazyThreadSafetyMode.NONE) {
+    val d = File(STORAGE.absoluteFile, "Sendout")
+    if (!d.exists())
+        d.mkdir()
+    d
+}
+
 public class MainActivity : AppCompatActivity(), View.OnClickListener {
+
     private val TAG = "MainActivity"
-
-    private val STORAGE: File by lazy(LazyThreadSafetyMode.NONE) {
-        val d = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "VKGroUploader")
-        if (!d.exists())
-            d.mkdir()
-        d
-    }
-
-    private val STORAGE_SENDOUT: File by lazy(LazyThreadSafetyMode.NONE) {
-        val d = File(STORAGE.absoluteFile, "Sendout")
-        if (!d.exists())
-            d.mkdir()
-        d
-    }
     private var group_id: Int by Delegates.notNull()
     private var message_text: String by Delegates.notNull()
     private var last_post_id: Int by Delegates.notNull()
@@ -329,10 +326,6 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     fun getStorageFiles(): Array<out File> = STORAGE.listFiles(FileFilter { !it.isDirectory })
 
-    private fun getNewFileForImage(): File {
-        val fileName = "VKGU_${SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())}.jpg"
-        return File(STORAGE.absolutePath, fileName)
-    }
 
     private fun toast(res: Int) {
         Toast.makeText(this, res, Toast.LENGTH_LONG).show()
@@ -347,10 +340,11 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun actionPhoto() {
         mylog("creating photo")
-        val file = getNewFileForImage()
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file))
-        startActivityForResult(intent, CAPTURE_IMAGE_REQUEST_CODE)
+        //        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        //        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file))
+        //        startActivityForResult(intent, CAPTURE_IMAGE_REQUEST_CODE)
+        val intent = Intent(this, CamActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
