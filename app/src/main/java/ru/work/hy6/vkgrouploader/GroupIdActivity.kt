@@ -7,6 +7,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.ContextMenu
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -20,6 +22,7 @@ class GroupIdActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
     private var pref: SharedPreferences by Delegates.notNull()
     private var groups: ArrayList<String> by Delegates.notNull()
     private var sAdapter: ArrayAdapter<String> by Delegates.notNull()
+    private val CM_DELETE_ID = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +32,7 @@ class GroupIdActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
         lvGroupId.onItemClickListener = this
         sAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, groups)
         lvGroupId.adapter = sAdapter
+        registerForContextMenu(lvGroupId)
 
 
         bOK.setOnClickListener {
@@ -40,6 +44,26 @@ class GroupIdActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        menu?.add(0, CM_DELETE_ID, 0, R.string.label_delete_button)
+    }
+
+    override fun onContextItemSelected(item: MenuItem?): Boolean {
+        if (item != null) {
+            if (item.itemId == CM_DELETE_ID) {
+                // получаем инфу о пункте списка
+                val acmi = item.menuInfo as AdapterView.AdapterContextMenuInfo
+                // удаляем из коллекции используя позицию пункта в списке
+                groups.remove(acmi.position)
+                // уведомляем что данные изменились
+                sAdapter.notifyDataSetChanged()
+                return true
+            }
+        }
+        return super.onContextItemSelected(item)
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
