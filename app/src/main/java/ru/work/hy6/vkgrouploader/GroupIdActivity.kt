@@ -12,15 +12,12 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import kotlinx.android.synthetic.a_group_name.bOK
-import kotlinx.android.synthetic.a_group_name.etGroup
-import kotlinx.android.synthetic.a_group_name.lvGroupId
-import java.util.*
+import kotlinx.android.synthetic.main.a_group_name.*
 import kotlin.properties.Delegates
 
 class GroupIdActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
     private var pref: SharedPreferences by Delegates.notNull()
-    private var groups: ArrayList<String> by Delegates.notNull()
+    private var groups: MutableList<String> by Delegates.notNull()
     private var sAdapter: ArrayAdapter<String> by Delegates.notNull()
     private val CM_DELETE_ID = 1
 
@@ -57,7 +54,7 @@ class GroupIdActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
                 // получаем инфу о пункте списка
                 val acmi = item.menuInfo as AdapterView.AdapterContextMenuInfo
                 // удаляем из коллекции используя позицию пункта в списке
-                groups.remove(acmi.position)
+                groups.removeAt(acmi.position)
                 // уведомляем что данные изменились
                 sAdapter.notifyDataSetChanged()
                 return true
@@ -73,7 +70,7 @@ class GroupIdActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
 
     private fun loadIds() {
         pref = getPreferences(Context.MODE_PRIVATE)
-        groups = pref.getStringSet(A_GROUPS, hashSetOf("$DEFAULT_GROUP")).toArrayList()
+        groups = pref.getStringSet(A_GROUPS, hashSetOf("$DEFAULT_GROUP")).toMutableList()
     }
 
     private fun saveIds() {

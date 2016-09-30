@@ -8,21 +8,18 @@ import android.view.View
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import kotlinx.android.synthetic.a_list_files.bDelete
-import kotlinx.android.synthetic.a_list_files.bInvert
-import kotlinx.android.synthetic.a_list_files.lvListFiles
-import kotlinx.android.synthetic.a_list_files.tvListFilesTitle
+import kotlinx.android.synthetic.main.a_list_files.*
 import java.io.File
 import java.io.FileFilter
 
-public class ListFilesActivity() : AppCompatActivity(), View.OnClickListener {
+class ListFilesActivity() : AppCompatActivity(), View.OnClickListener {
     private val TAG = "ListFilesActivity"
     private val DIRECTORY = activeDirectory
     private val FILES: Array<out File> by lazy(LazyThreadSafetyMode.NONE) {
         DIRECTORY.listFiles(FileFilter { !it.isDirectory })
     }
     private val NAMES: Array<String> by lazy(LazyThreadSafetyMode.NONE) {
-        Array(FILES.size(), { i -> "${FILES[i].name} \t ${FILES[i].length() / 1024} Kb" })
+        Array(FILES.size, { i -> "${FILES[i].name} \t ${FILES[i].length() / 1024} Kb" })
     }
 
     private var isItemСheck = false
@@ -54,7 +51,7 @@ public class ListFilesActivity() : AppCompatActivity(), View.OnClickListener {
         bDelete.setOnClickListener(this)
         bInvert.setOnClickListener(this)
 
-        if (FILES.size() > 0) bInvert.visibility = View.VISIBLE
+        if (FILES.size > 0) bInvert.visibility = View.VISIBLE
         lvListFiles.onItemClickListener = object : AdapterView.OnItemClickListener {
             override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 updateButtonDelete()
@@ -85,7 +82,7 @@ public class ListFilesActivity() : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun actionInvert() {
-        for (i in 0..FILES.size() - 1) {
+        for (i in 0..FILES.size - 1) {
             val check = lvListFiles.isItemChecked(i)
             lvListFiles.setItemChecked(i, !check)
         }
@@ -95,7 +92,7 @@ public class ListFilesActivity() : AppCompatActivity(), View.OnClickListener {
     private fun actionDelete() {
         val sba = lvListFiles.checkedItemPositions
         if (isItemСheck) {
-            for (i in 0..FILES.size() - 1) {
+            for (i in 0..FILES.size - 1) {
                 val key = sba.keyAt(i)
                 if (sba.get(key))
                     log("${FILES[key].name}, delete: ${FILES[key].delete()}")

@@ -22,7 +22,7 @@ import com.vk.sdk.api.model.VKPhotoArray
 import com.vk.sdk.api.model.VKWallPostResult
 import com.vk.sdk.api.photo.VKImageParameters
 import com.vk.sdk.api.photo.VKUploadImage
-import kotlinx.android.synthetic.main.*
+import kotlinx.android.synthetic.main.main.*
 import org.json.JSONObject
 import java.io.File
 import java.io.FileFilter
@@ -229,9 +229,9 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
         saveSettings()
 
         if (isOnline() && VKSdk.isLoggedIn()) {
-            if (getStorageFiles().size() == 0 && message_text == "" ) {
+            if (getStorageFiles().size == 0 && message_text == "") {
                 toast(R.string.message_send_nothing)
-            } else if (getStorageFiles().size() == 0 && message_text != "") {
+            } else if (getStorageFiles().size == 0 && message_text != "") {
                 updateLastPost(last_post_id)
             } else {
                 toast(R.string.message_run_send)
@@ -257,7 +257,7 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun sendPhotos() {
         val files = getStorageFiles()
-        val requests = Array(files.size(), { it -> VKRequest("") })
+        val requests = Array(files.size, { it -> VKRequest("") })
         for ((i, file) in files.withIndex()) {
             val bitmap = getBitmap(file.absoluteFile)
             val request = VKApi.uploadWallPhotoRequest(VKUploadImage(bitmap, VKImageParameters.jpgImage(0.9f)), 0, group_id);

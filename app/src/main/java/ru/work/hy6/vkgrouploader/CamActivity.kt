@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.*
 import android.widget.Toast
-import kotlinx.android.synthetic.a_cam.svSurface
+import kotlinx.android.synthetic.main.a_cam.*
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -21,8 +21,8 @@ public class CamActivity : AppCompatActivity(), View.OnClickListener {
 
     var mCamera: Camera? = null
 
-    val holder: SurfaceHolder by lazy { svSurface.holder }
-    val holderCallback: HolderCallback by lazy { HolderCallback() }
+    val previewHolder: SurfaceHolder by lazy { svSurface.holder }
+    val surfaceCallback: HolderCallback by lazy { HolderCallback() }
     val CAMERA_ID = 0
 
     val FULL_SCREEN = true
@@ -31,7 +31,7 @@ public class CamActivity : AppCompatActivity(), View.OnClickListener {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.a_cam)
-        holder.addCallback(holderCallback)
+        previewHolder.addCallback(surfaceCallback)
         svSurface.setOnClickListener(this)
     }
 
@@ -83,7 +83,10 @@ public class CamActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        mCamera = Camera.open(CAMERA_ID)
+        if (mCamera == null) {
+            mCamera = Camera.open();
+//            mCamera = Camera.open(CAMERA_ID)
+        }
         setPreviewSize(FULL_SCREEN)
     }
 
@@ -115,7 +118,7 @@ public class CamActivity : AppCompatActivity(), View.OnClickListener {
                 mCamera?.setPreviewDisplay(holder)
                 mCamera?.startPreview()
             } catch(e: Exception) {
-                e.printStackTrace()
+                e.printStackTrace() //Nhfvgfvgfv88 Nhfvgfvgfv88
             }
             safeToCapture = true
         }
