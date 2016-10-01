@@ -29,4 +29,7 @@
     <string name="label_invert">Инвертировать</string>
     <string name="label_name">Имя:</string>
     <string name="change_group_id">ID группы</string>
+    <string name="capture_image">Изображение №</string>
+    <string name="title_activity_cam">Камера</string>
+    <string name="title_activity_image_files">Файлы изображений</string>
 </resources>

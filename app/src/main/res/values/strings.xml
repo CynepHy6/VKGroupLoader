@@ -3,7 +3,7 @@
     <integer name="com_vk_sdk_AppId">5028586</integer>
 
     <string name="action_settings">Settings</string>
-    <string name="capture_image">Capture image</string>
+    <string name="capture_image">Image #</string>
     <string name="label_vk_login">VK Login</string>
     <string name="label_vk_logout">VK Logout</string>
     <string name="label_get_photo_button">get photo </string>
@@ -36,7 +36,6 @@
     <string name="label_name">Name:</string>
     <string name="title_activity_image_files">ImageFilesActivity</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="change_group_id">Group ID</string>
     <string name="title_activity_cam">Camera</string>
 </resources>

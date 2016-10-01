@@ -77,7 +77,7 @@ public class CamActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun getPhotoName(): String {
-        val sdf = SimpleDateFormat("yyyyMMdd_HHmmss")
+        val sdf = SimpleDateFormat("dd-MM-yyyy_HH:mm:ss", Locale.getDefault())
         return "${sdf.format(Date())}.jpg"
     }
 

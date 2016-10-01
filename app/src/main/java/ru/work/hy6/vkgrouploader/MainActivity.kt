@@ -54,7 +54,7 @@ val STORAGE_SENDOUT: File by lazy(LazyThreadSafetyMode.NONE) {
     d
 }
 
-public class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private val TAG = "MainActivity"
     private var group_id: Int by Delegates.notNull()
@@ -344,9 +344,6 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun actionPhoto() {
         mylog("creating photo")
-        //        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        //        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file))
-        //        startActivityForResult(intent, CAPTURE_IMAGE_REQUEST_CODE)
         val intent = Intent(this, CamActivity::class.java)
         startActivity(intent)
     }
