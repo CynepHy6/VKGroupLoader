@@ -15,14 +15,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 public class CamActivity : AppCompatActivity(), View.OnClickListener {
-    val DIR2SAVE = STORAGE
+    val PUBLIC = STORAGE
     var count = 0
     var safeToCapture = false
 
     var mCamera: Camera? = null
 
-    val previewHolder: SurfaceHolder by lazy { svSurface.holder }
-    val surfaceCallback: HolderCallback by lazy { HolderCallback() }
+    val HOLPREVIEW: SurfaceHolder by lazy { svSurface.holder }
+    val HOLCALLBACK: HolderCallback by lazy { HolderCallback() }
     val CAMERA_ID = 0
 
     val FULL_SCREEN = true
@@ -31,7 +31,7 @@ public class CamActivity : AppCompatActivity(), View.OnClickListener {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.a_cam)
-        previewHolder.addCallback(surfaceCallback)
+        HOLPREVIEW.addCallback(HOLCALLBACK)
         svSurface.setOnClickListener(this)
     }
 
@@ -63,7 +63,7 @@ public class CamActivity : AppCompatActivity(), View.OnClickListener {
 
     inner class SaveInBackground : AsyncTask<ByteArray, String, String>() {
         override fun doInBackground(vararg params: ByteArray?): String? {
-            val photoFile = File(DIR2SAVE, getPhotoName())
+            val photoFile = File(PUBLIC, getPhotoName())
             try {
                 val fos = FileOutputStream(photoFile)
                 fos.write(params[0])

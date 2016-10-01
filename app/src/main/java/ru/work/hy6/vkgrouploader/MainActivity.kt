@@ -27,6 +27,7 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileFilter
 import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.properties.Delegates
 
 
@@ -89,6 +90,7 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
         labelGroupName.isClickable = true
         labelGroupName.setOnClickListener(this)
 
+        loadSettings()
         if (isJustStarted) actionPhoto()
     }
 
@@ -193,7 +195,7 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
         group_id = if ("${bGroupId.text}" == "") DEFAULT_GROUP else "${bGroupId.text}".toInt()
         ed.putInt(A_GROUP_ID, group_id)
         ed.putInt(A_LAST_POST_ID, last_post_id)
-        ed.commit()
+        ed.apply()
     }
 
     private fun getDefaultMessage(): String {
@@ -202,7 +204,9 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
         val file = getStorageFiles().firstOrNull()
         if (file != null) {
             val date = Math.round((file.lastModified() / 600000).toDouble()) * 600000
-            return SimpleDateFormat("$today dd MMMM $about HH.mm ").format(date)
+            val date_day = SimpleDateFormat("dd MMMM", Locale.getDefault()).format(date)
+            val date_hour = SimpleDateFormat("HH.mm", Locale.getDefault()).format(date)
+            return "$today $date_day $about $date_hour "
         } else {
             return ""
         }
