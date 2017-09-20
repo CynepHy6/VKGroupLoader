@@ -118,7 +118,7 @@ public class CamActivity : AppCompatActivity(), View.OnClickListener {
                 mCamera?.setPreviewDisplay(holder)
                 mCamera?.startPreview()
             } catch(e: Exception) {
-                e.printStackTrace() //Nhfvgfvgfv88 Nhfvgfvgfv88
+                e.printStackTrace()
             }
             safeToCapture = true
         }

@@ -6,7 +6,7 @@ import com.vk.sdk.VKSdk
 
 // Created by andrey on 15.09.15.
 var isJustStarted = true
-val DEBUG = false
+val DEBUG = true
 
 public class VKGUapplication : Application() {
     override fun onCreate() {
